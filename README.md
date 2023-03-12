@@ -3,3 +3,4 @@
 
 ## 담당 팀원
 - [신권일](https://github.com/shin5774)
+- [이영원](https://github.com/dlduddnjs198)
