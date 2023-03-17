@@ -34,6 +34,8 @@ public class CategorySearchService {
     public void saveCategorySearch(Double xleft, Double yleft, Double xright, Double yright) throws JsonProcessingException {
         int page = 1;
         boolean isEnd=false;
+        //대형마트, 문화시설, 관광명소, 음식점, 카페 순
+        String[] categories={"MT1", "CT1", "AT4", "FD6", "CE7"};
 
         RestTemplate restTemplate = new RestTemplate();
         String url = "https://dapi.kakao.com/v2/local/search/category.json?category_group_code=CT1&rect=" + xleft + "," + yleft + "," + xright + "," + yright;
