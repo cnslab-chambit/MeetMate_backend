@@ -1,34 +1,33 @@
 package com.chambit.meetmate.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@NoArgsConstructor
-public class UserEntity {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
+@Table(name = "user")
+public class User {
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(length = 50,nullable = false)
+    private String userId;
+
+    @Column(length = 50) //차후 nullable추가 해야할지 의논
     private String nickname;
+
+    @Column(length = 50,nullable = false)
     private String email;
 
     @Builder
-    public UserEntity(String id,String nickname,String email){
-        this.id=id;
+    public User(String userId, String nickname, String email){
+        this.userId = userId;
         this.nickname=nickname;
         this.email=email;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getNickname() {
-        return nickname;
-    }
-
-    public String getEmail() {
-        return email;
     }
 }
