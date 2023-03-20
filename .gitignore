@@ -1,2 +1,3 @@
 .idea/
 meetmate/src/main/resources/application-apikey.properties
+meetmate/src/main/resources/application-db.properties
