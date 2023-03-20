@@ -1,7 +1,5 @@
 package com.chambit.meetmate.service;
 
-import com.chambit.meetmate.dto.OAuthResponseDTO;
-import com.chambit.meetmate.entity.OAuthEntity;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,13 +9,13 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
-import java.util.Objects;
 
 @Service
 public class OAuthService {
 
     @Value("${authApi-key}")
     private String apikey;
+
 
     public String getAccessToken (String code){
         String accessToken="";
@@ -75,6 +73,7 @@ public class OAuthService {
 
     public void createKakaoUser (String token){
         String reqURL="https://kapi.kakao.com/v2/user/me";
+        System.out.println(token);
 
         try{
             URL url=new URL(reqURL);
@@ -116,6 +115,8 @@ public class OAuthService {
             System.out.println(email);
 
             br.close();
+
+
         } catch (IOException e){
             e.printStackTrace();
         }

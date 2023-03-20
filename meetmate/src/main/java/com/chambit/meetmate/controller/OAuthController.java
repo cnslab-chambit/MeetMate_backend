@@ -1,6 +1,5 @@
 package com.chambit.meetmate.controller;
 
-import com.chambit.meetmate.dto.OAuthResponseDTO;
 import com.chambit.meetmate.service.OAuthService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
