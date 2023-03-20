@@ -5,13 +5,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-public class UserDTO {
-
+public class OAuthDTO {
     @Getter
     @AllArgsConstructor
     @Builder
     public static class Info{
-        private Long id;
         private String user_id;
         private String nickname;
         private String email;
@@ -21,6 +19,8 @@ public class UserDTO {
     @Setter
     public static class Request{
         private String user_id;
+        private String nickname;
+        private String email;
     }
 
     @Getter
@@ -30,6 +30,4 @@ public class UserDTO {
         private int returnCode;
         private String returnMessage;
     }
-
-
 }
