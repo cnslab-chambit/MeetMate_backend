@@ -180,7 +180,7 @@ class PlaceSettingAPI(viewsets.ModelViewSet):
                 self.place_save(data, cafes[i])
                 return
 
-            self.place_save(data, cafes[4])
+        self.place_save(data, cafes[4])
 
         '''
         if any(keyword in data['category_name'] for keyword in sub_category[0]):
