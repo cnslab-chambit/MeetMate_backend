@@ -125,9 +125,9 @@ class CategorySettingAPI(viewsets.ModelViewSet):
         category={
             '대형마트':['홈플러스','노브랜드','하나로마트','이마트','코스트코','기타']
             ,'문화시설':['박물관','미술관','전시관','공연장/연극극장','영화관','문화원','과학관','기념관','아쿠아리움','기타']
-            ,'관광명소':['자연경관','문화/축제','테마거리','전망/조망','문화유산/역사적명소','기타']
-            ,'음식점':['치킨','분식','양식','한식','일식','간식','중식','술집','뷔페','아시아음식','패스트푸드','도시락','퓨전요리','기타']
-            ,'카페':['카페','테마카페','동물카페','북카페','기타']}
+            ,'관광명소':['문화유산/역사적명소','자연경관','문화/축제','테마거리','전망/조망','기타']
+            ,'음식점':['퓨전요리','아시아음식','패스트푸드','도시락','술집','뷔페','중식','일식','간식','양식','치킨','분식','한식','기타']
+            ,'카페':['북카페','동물카페','테마카페','카페','기타']}
 
         for big_category,small_categories in category.items():
             p_serializer=self.get_serializer(data={"name":big_category})
@@ -175,6 +175,14 @@ class PlaceSettingAPI(viewsets.ModelViewSet):
             , ['반지', '공방','라이브','보드','사주','갤러리','키즈','드레스']
             , ['떡', '찻집','디저트','카페']
         ]
+        for i in range(len(sub_category)):
+            if any(keyword in data['category_name'] for keyword in sub_category[i]):
+                self.place_save(data, cafes[i])
+                return
+
+            self.place_save(data, cafes[4])
+
+        '''
         if any(keyword in data['category_name'] for keyword in sub_category[0]):
             self.place_save(data,cafes[3])
         elif any(keyword in data['category_name'] for keyword in sub_category[1]):
@@ -184,12 +192,21 @@ class PlaceSettingAPI(viewsets.ModelViewSet):
         elif any(keyword in data['category_name'] for keyword in sub_category[3]):
             self.place_save(data,cafes[0])
         else:
-            self.place_save(data, cafes[5])
+            self.place_save(data, cafes[4])
+        '''
 
     def mart_insert(self,data):
         p_mart=Category.objects.get(name='대형마트',parent=None)
         marts = Category.objects.filter(parent=p_mart)
+        sub_category = ['홈플러스','노브랜드','하나로','이마트','코스트코']
 
+        for i in range(5):
+            if sub_category[i] in  data['category_name']:
+                self.place_save(data, marts[i])
+                return
+
+        self.place_save(data, marts[5])
+        '''
         if '홈플러스' in data['category_name']:
             self.place_save(data,marts[0])
         elif '노브랜드' in data['category_name']:
@@ -202,31 +219,19 @@ class PlaceSettingAPI(viewsets.ModelViewSet):
             self.place_save(data,marts[4])
         else:
             self.place_save(data, marts[5])
-
+        '''
 
     def culture_insert(self,data):
         p_culture=Category.objects.get(name='문화시설',parent=None)
         cultures = Category.objects.filter(parent=p_culture)
-        if '박물관' in data['category_name']:
-            self.place_save(data, cultures[0])
-        elif '미술관' in data['category_name']:
-            self.place_save(data, cultures[1])
-        elif '전시관' in data['category_name']:
-            self.place_save(data, cultures[2])
-        elif '공연장' in data['category_name']:
-            self.place_save(data, cultures[3])
-        elif '영화관' in data['category_name']:
-            self.place_save(data, cultures[4])
-        elif '문화원' in data['category_name']:
-            self.place_save(data, cultures[5])
-        elif '과학관' in data['category_name']:
-            self.place_save(data, cultures[6])
-        elif '기념관' in data['category_name']:
-            self.place_save(data, cultures[7])
-        elif '아쿠아리움' in data['category_name']:
-            self.place_save(data, cultures[8])
-        else:
-            self.place_save(data, cultures[9])
+
+        sub_category = ['박물관', '미술관', '전시관', '공연장', '영화관','문화원','과학관','기념관','아쿠아리움']
+
+        for i in range(len(sub_category)):
+            if sub_category[i] in data['category_name']:
+                self.place_save(data, cultures[i])
+                return
+        self.place_save(data, cultures[9])
 
     def viewing_insert(self,data):
         p_viewing=Category.objects.get(name='관광명소',parent=None)
@@ -239,6 +244,13 @@ class PlaceSettingAPI(viewsets.ModelViewSet):
             , ['테마거리','먹자골목','카페거리']
             , ['전망대', '천문대']
         ]
+
+        for i in range(len(sub_category)):
+            if any(keyword in data['category_name'] for keyword in sub_category[i]):
+                self.place_save(data, viewings[i])
+                return
+        self.place_save(data, viewings[5])
+        '''
         if any(keyword in data['category_name'] for keyword in sub_category[0]):
             self.place_save(data,viewings[4])
         elif any(keyword in data['category_name'] for keyword in sub_category[1]):
@@ -251,11 +263,21 @@ class PlaceSettingAPI(viewsets.ModelViewSet):
             self.place_save(data,viewings[3])
         else:
             self.place_save(data, viewings[5])
+        '''
 
     def food_insert(self,data):
         p_food=Category.objects.get(name='음식점',parent=None)
         foods = Category.objects.filter(parent=p_food)
 
+        sub_category = ['퓨전', '아시아음식', '패스트푸드','도시락', '술집', '뷔페', '중식', '일식','간식','양식','치킨','분식','한식']
+
+        for i in range(len(sub_category)):
+            if sub_category[i] in data['category_name']:
+                self.place_save(data, foods[i])
+                return
+        self.place_save(data, foods[13])
+
+        '''
         if '퓨전' in data['category_name']:
             self.place_save(data, foods[12])
         elif '아시아음식' in data['category_name']:
@@ -284,6 +306,7 @@ class PlaceSettingAPI(viewsets.ModelViewSet):
             self.place_save(data, foods[3])
         else:
             self.place_save(data, foods[13])
+        '''
 
     def crawler(self,sub_docs):
         driver = webdriver.Chrome('./chromedriver', options=self.options)
