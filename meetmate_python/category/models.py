@@ -4,8 +4,8 @@ from django.db import models
 class SearchDocument(models.Model):
     id = models.AutoField(primary_key=True)
     place_url = models.CharField(max_length=255, null=True)
-    x = models.DecimalField(max_digits=50,decimal_places=38)
-    y = models.DecimalField(max_digits=50,decimal_places=38)
+    x = models.CharField(max_length=255, null=True)
+    y = models.CharField(max_length=255, null=True)
     category_group_code=models.CharField(max_length=255,null=True)
     category_name=models.CharField(max_length=255,null=True)
     place_name=models.CharField(max_length=255,null=True)
@@ -27,11 +27,11 @@ class Category(models.Model):
 class Place(models.Model):
     id = models.AutoField(primary_key=True)
     place_url = models.CharField(max_length=255, null=True)
-    x = models.DecimalField(max_digits=50,decimal_places=38)
-    y = models.DecimalField(max_digits=50,decimal_places=38)
+    x = models.CharField(max_length=255, null=True)
+    y = models.CharField(max_length=255, null=True)
     place_name = models.CharField(max_length=255, null=True)
     address = models.CharField(max_length=255, null=True)
-    star_rate=models.DecimalField(max_digits=10,decimal_places=8)
+    star_rate=models.DecimalField(max_digits=3,decimal_places=2)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True)
 
     class Meta:

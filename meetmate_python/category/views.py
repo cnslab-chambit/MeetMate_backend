@@ -10,6 +10,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import StaleElementReferenceException, NoSuchElementException
 from category import settings
+import threading
 import json
 import requests,time,os,json
 
@@ -284,119 +285,51 @@ class PlaceSettingAPI(viewsets.ModelViewSet):
         else:
             self.place_save(data, foods[13])
 
-    @action(detail=False, methods=['GET'])
-    def setting(self,request):
-        notProvideUrl=[]
-
-        '''
+    def crawler(self,sub_docs):
         driver = webdriver.Chrome('./chromedriver', options=self.options)
-        driver.get('https://place.map.kakao.com/15439871')
-        
-        try:
-            star_find = driver.find_element(By.CSS_SELECTOR,
-                                            "#mArticle > div.cont_essential > div:nth-child(1) > div.place_details > div > div > a:nth-child(3) > span.color_b")
-        except:
-            print("except 발생")
-
-        '''
-
-        documents=SearchDocument.objects.values()
-        #print(documents)
-
-        for i in range(len(documents)//100):
-            driver = webdriver.Chrome('./chromedriver', options=self.options)
-
-            cur_data=[]
-            cur_data_stars=[]
-            for j in range(100):
-                driver.execute_script('window.open("about:blank", "_blank");')
-                cur_data.append(documents[i*100+j])
-            tabs = driver.window_handles
-
-            #print(cur_data)
-            for j in range(len(cur_data)):
-                driver.switch_to.window(tabs[j])
-                driver.get(cur_data[j]['place_url'])
-            time.sleep(1)
-
-
-            for j in range(len(cur_data)):
-                driver.switch_to.window(tabs[j])
-                print(cur_data[j]['place_url'])
-                try:
-                    star_find = driver.find_element(By.CSS_SELECTOR,
-                                                    "#mArticle > div.cont_essential > div:nth-child(1) > div.place_details > div > div > a:nth-child(3) > span.color_b")
-                    cur_data_stars.append(float(star_find.text))
-                except (StaleElementReferenceException ,NoSuchElementException) as e:
-                    print("별점 미제공 url 감지, 0점으로 가정하고 저장합니다.")
-                    print("현재url",cur_data[j]['place_url'])
-                    notProvideUrl.append(cur_data[j]['place_url'])
-                    cur_data_stars.append(0.0)
-                    continue
-
-            driver.close()
-
-            print(str(i+1)+" 번째 data저장 시작")
-            for j in range(len(cur_data)):
-                cur_data[j]['star_rate']=cur_data_stars[j]
-
-                if cur_data[j]['category_group_code']=='MT1':
-                    self.mart_insert(cur_data[j])
-                elif cur_data[j]['category_group_code']=='CT1':
-                    self.culture_insert(cur_data[j])
-                elif cur_data[j]['category_group_code']=='AT4':
-                    self.viewing_insert(cur_data[j])
-                elif cur_data[j]['category_group_code']=='FD6':
-                    self.food_insert(cur_data[j])
-                elif cur_data[j]['category_group_code']=='CE7':
-                    self.cafe_insert(cur_data[j])
-
-        i+=1
-        driver = webdriver.Chrome('./chromedriver', options=self.options)
-        cur_data=[]
-        cur_data_stars = []
-        for j in range(i*100,len(documents)):
-            driver.execute_script('window.open("about:blank", "_blank");')
-            cur_data += documents[j]
-        tabs = driver.window_handles
-
-        for j in range(len(cur_data)):
-            driver.switch_to.window(tabs[j])
-            driver.get(cur_data[j]['place_url'])
-        time.sleep(1)
-
-        for j in range(len(cur_data)):
-            driver.switch_to.window(tabs[j])
+        for doc in sub_docs:
+            driver.get(doc['place_url'])
+            driver.implicitly_wait(5)
             try:
                 star_find = driver.find_element(By.CSS_SELECTOR,
                                                 "#mArticle > div.cont_essential > div:nth-child(1) > div.place_details > div > div > a:nth-child(3) > span.color_b")
-                cur_data_stars.append(float(star_find.text))
-            except (StaleElementReferenceException ,NoSuchElementException) as e:
-                print("별점 미제공 url 감지, 0점으로 가정하고 저장합니다.")
-                print("현재url",cur_data[j]['place_url'])
-                notProvideUrl.append(cur_data[j]['place_url'])
-                cur_data_stars.append(0.0)
-                continue
+                doc['star_rate'] = float(star_find.text)
+            except (StaleElementReferenceException, NoSuchElementException) as e:
+                print("별점 미제공 url 감지, 0점으로 처리합니다.")
+                print("현재url", doc['place_url'])
+                doc['star_rate'] = 0.0
+
+            print("저장합니다")
+            if doc['category_group_code'] == 'MT1':
+                self.mart_insert(doc)
+            elif doc['category_group_code'] == 'CT1':
+                self.culture_insert(doc)
+            elif doc['category_group_code'] == 'AT4':
+                self.viewing_insert(doc)
+            elif doc['category_group_code'] == 'FD6':
+                self.food_insert(doc)
+            elif doc['category_group_code'] == 'CE7':
+                self.cafe_insert(doc)
 
         driver.close()
 
-        for j in range(len(cur_data)):
-            cur_data[j]['star_rate'] = cur_data_stars[j]
+    @action(detail=False, methods=['GET'])
+    def setting(self,request):
+        documents = SearchDocument.objects.values()
+        docs_len = len(documents)
+        subs_docs_len = docs_len // 8
+        threads = []
 
-            if cur_data[j]['category_group_code'] == 'MT1':
-                self.mart_insert(cur_data[j])
-            elif cur_data[j]['category_group_code'] == 'CT1':
-                self.culture_insert(cur_data[j])
-            elif cur_data[j]['category_group_code'] == 'AT4':
-                self.viewing_insert(cur_data[j])
-            elif cur_data[j]['category_group_code'] == 'FD6':
-                self.food_insert(cur_data[j])
-            elif cur_data[j]['category_group_code'] == 'CE7':
-                self.cafe_insert(cur_data[j])
+        for i in range(8):
+            if i == 7:
+                sub_docs = documents[i * subs_docs_len:]
+            else:
+                sub_docs = documents[i * subs_docs_len:(i + 1) * subs_docs_len]
+            t = threading.Thread(target=self.crawler, args=(sub_docs,))
+            t.start()
+            threads.append(t)
 
+        for t in threads:
+            t.join()
 
-
-        return Response(notProvideUrl)
-
-
-
+        return Response("설정 완료")
