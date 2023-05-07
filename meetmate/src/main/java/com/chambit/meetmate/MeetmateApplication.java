@@ -6,11 +6,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class MeetmateApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(MeetmateApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(MeetmateApplication.class, args);
+    }
 
-	// 아래부터 메인 실행시 같이 실행되는 코드
+    // 아래부터 메인 실행시 같이 실행되는 코드
 //	@Autowired
 //	private CategorySearchService categorySearchService;
 //

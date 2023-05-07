@@ -1,6 +1,6 @@
 package com.chambit.meetmate.dto;
 
-import com.chambit.meetmate.entity.Search;
+import com.chambit.meetmate.entity.Place;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,5 +10,5 @@ import java.util.List;
 @Setter
 public class SearchDTO {
     private String category_name;
-    private List<Search> searchList;
+    private List<Place> searchList;
 }
