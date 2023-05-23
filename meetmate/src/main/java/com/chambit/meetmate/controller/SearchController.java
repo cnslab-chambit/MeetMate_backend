@@ -31,4 +31,10 @@ public class SearchController {
         Place resultList = searchService.findCategories(id);
         return ResponseEntity.ok().body(resultList);
     }
+
+    @GetMapping("/find")
+    public @ResponseBody ResponseEntity<List<SearchDTO>> find(@RequestParam("longitude") double longitude, @RequestParam("latitude") double latitude) {
+        List<SearchDTO> resultList = searchService.find(longitude, latitude);
+        return ResponseEntity.ok().body(resultList);
+    }
 }
