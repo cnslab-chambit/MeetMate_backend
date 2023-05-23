@@ -1,5 +1,7 @@
 .idea/
 meetmate/src/main/resources/application-apikey.properties
 meetmate/src/main/resources/application-db.properties
+meetmate/src/main/resources/application-fdb.properties
+meetmate/src/main/resources/application-wdb.properties
 meetmate_python/secrets.json
 meetmate_python/database.json
